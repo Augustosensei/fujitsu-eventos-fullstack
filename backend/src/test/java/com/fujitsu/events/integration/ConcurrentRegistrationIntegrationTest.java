@@ -51,7 +51,8 @@ class ConcurrentRegistrationIntegrationTest extends IntegrationTestSupport {
         var start = new CountDownLatch(1);
         var futures = new ArrayList<Future<Integer>>();
 
-        try (var executor = Executors.newFixedThreadPool(THREADS)) {
+        var executor = Executors.newFixedThreadPool(THREADS);
+        try {
             Callable<Integer> send = () -> {
                 start.await();
                 return httpClient.send(request, HttpResponse.BodyHandlers.discarding()).statusCode();
@@ -67,6 +68,8 @@ class ConcurrentRegistrationIntegrationTest extends IntegrationTestSupport {
 
             assertThat(statuses.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())))
                     .containsOnly(entry(201, 1L), entry(409, 9L));
+        } finally {
+            executor.shutdownNow();
         }
         assertThat(eventRepository.count()).isEqualTo(1);
         assertThat(auditRecordRepository.count()).isEqualTo(1);

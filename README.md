@@ -7,7 +7,7 @@ identificador para comprobar la regla de duplicados y consultar eventos y audito
 
 | Pieza | Tecnología |
 |-------|------------|
-| Backend | Java 25, Spring Boot 4.1.2, Spring Data JPA + H2 en memoria, Bean Validation, MapStruct, Lombok, springdoc-openapi, Actuator + Micrometer |
+| Backend | Java 17+ (desarrollado con Java 25), Spring Boot 4.1.2, Spring Data JPA + H2 en memoria, Bean Validation, MapStruct, Lombok, springdoc-openapi, Actuator + Micrometer |
 | Frontend | Angular 22.2 (standalone, zoneless, signals, Signal Forms, `httpResource`), CSS propio |
 | Pruebas | JUnit + Mockito + slices de Spring Boot, JaCoCo · Vitest + `HttpTestingController` |
 | Entrega | Docker (multi-stage, sin root), nginx como proxy de `/api`, Docker Compose |
@@ -42,7 +42,7 @@ empiecen con `cd`.
 
 | Herramienta | Versión | Para qué |
 |-------------|---------|----------|
-| JDK | 25 | Backend. Maven **no** hace falta: el repo trae el wrapper `./mvnw` (Maven 3.10.0). |
+| JDK | 17 o superior | Backend. Probado con JDK 17.0.20.1, 21.0.1 y 25. Maven **no** hace falta: el repo trae el wrapper `./mvnw` (Maven 3.10.0). |
 | Node.js | `^22.22.3 \|\| ^24.15.0 \|\| >=26.0.0` (rango `engines` de Angular CLI 22.2.4) | Frontend. Probado con Node 24.22.1 y npm 11.19.1. |
 | Docker | Docker Engine con el plugin Compose (`docker compose`) | Opcional: levantar todo con un comando. Probado con Engine 29.9.2 y Compose 5.6.1. |
 
@@ -396,8 +396,8 @@ al priorizar la claridad.
 
 | Decisión | Por qué |
 |----------|---------|
-| Java 25 (LTS), Spring Boot 4 y Angular 22: las últimas estables. | Permite records, `sealed`, `switch` con patrones, signals y Signal Forms. |
-| Maven con wrapper (`./mvnw`) y Maven Enforcer (Java ≥ 25, Maven ≥ 3.9, sin versiones duplicadas, sin SNAPSHOT). | Build reproducible sin instalar Maven. |
+| Spring Boot 4 y Angular 22 (las últimas estables); backend compilado para Java 17 (`--release 17`) y desarrollado con Java 25 LTS. | Java 17 es el mínimo que admite Spring Boot 4: así el backend corre con cualquier JDK desde 17 sin perder records, `sealed` ni `switch` como expresión. Las imágenes Docker usan Java 25. |
+| Maven con wrapper (`./mvnw`) y Maven Enforcer (Java ≥ 17, Maven ≥ 3.9, sin versiones duplicadas, sin SNAPSHOT). Con JDK 23 o superior, un perfil (`jdk23-unsafe-memory-access`) compila en un proceso aparte con `--sun-misc-unsafe-memory-access=allow`. | Build reproducible sin instalar Maven. El perfil evita el aviso de `sun.misc.Unsafe` que Lombok produce en JDK recientes; esa opción no existe antes de JDK 23, por eso no puede ir fija para todas las versiones. |
 | Lombok solo para `@RequiredArgsConstructor` (inyección por constructor), `@Getter` + constructor protegido en entidades, `@Getter` en la excepción base (para su `ErrorCode`) y `@Slf4j`; prohibidos `@Data`, `@Setter`, `@Builder` y similares (`lombok.config`). | Menos código repetido sin perder inmutabilidad: las entidades no tienen setters y los datos viajan en records. |
 | Cobertura mínima 100 % de líneas en backend y frontend. | Cada línea de producción tiene al menos un test que la ejecuta; las exclusiones están listadas en [Pruebas](#pruebas). |
 | Identificadores en inglés; mensajes al usuario (API y UI) en español rioplatense. | Convención habitual del código; el enunciado está en español de Argentina. |

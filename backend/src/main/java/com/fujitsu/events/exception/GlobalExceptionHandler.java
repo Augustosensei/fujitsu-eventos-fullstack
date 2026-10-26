@@ -214,7 +214,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         if (!(cause instanceof MismatchedInputException mismatch) || mismatch.getPath().isEmpty()) {
             return Optional.empty();
         }
-        return Optional.ofNullable(mismatch.getPath().getFirst().getPropertyName())
+        return Optional.ofNullable(mismatch.getPath().get(0).getPropertyName())
                 .map(field -> new FieldErrorResponse(field, invalidValueMessage(field, mismatch.getTargetType())));
     }
 

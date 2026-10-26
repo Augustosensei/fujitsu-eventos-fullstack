@@ -15,7 +15,7 @@ public final class IsoLocalDateTimeDeserializer extends StringOnlyDeserializer<L
     protected LocalDateTime fromString(String value, DeserializationContext context) {
         try {
             return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (DateTimeParseException _) {
+        } catch (DateTimeParseException ignored) {
             throw invalidFormat(context, value, "expected ISO-8601 local date-time without offset");
         }
     }

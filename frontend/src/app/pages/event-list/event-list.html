@@ -1,0 +1,76 @@
+<section class="page" aria-labelledby="events-title">
+  <h1 id="events-title" class="page__title">Eventos registrados</h1>
+  <p class="page__intro">
+    Los más recientes primero, según la fecha en que los recibió el servidor.
+  </p>
+
+  @if (events.isLoading()) {
+    <app-status-message kind="loading">Cargando eventos…</app-status-message>
+  } @else if (error(); as failure) {
+    <app-status-message kind="error">
+      <p class="message__title">{{ failure.message }}</p>
+      <button type="button" class="button button--secondary" (click)="events.reload()">
+        Reintentar
+      </button>
+    </app-status-message>
+  } @else if (events.value(); as result) {
+    @if (result.totalElements === 0) {
+      <div class="card empty-state">
+        <app-status-message kind="info">
+          <p class="message__title">Todavía no hay eventos registrados.</p>
+          <p>Cuando registres uno, va a aparecer en esta tabla.</p>
+        </app-status-message>
+        <a class="button button--primary" routerLink="/events/new">Registrar evento</a>
+      </div>
+    } @else {
+      <div class="card card--flush">
+        <table class="data-table">
+          <caption class="visually-hidden">
+            Eventos registrados, página
+            {{
+              result.page + 1
+            }}
+            de
+            {{
+              result.totalPages
+            }}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Identificador</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Fecha del evento</th>
+              <th scope="col">Recibido</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (event of result.content; track event.eventId) {
+              <tr>
+                <td data-label="Identificador" class="data-table__code">{{ event.eventId }}</td>
+                <td data-label="Tipo">
+                  <span [class]="'badge badge--' + event.eventType.toLowerCase()">
+                    {{ typeLabels[event.eventType] }}
+                    <span class="badge__code">{{ event.eventType }}</span>
+                  </span>
+                </td>
+                <td data-label="Descripción" class="data-table__text">{{ event.description }}</td>
+                <td data-label="Fecha del evento" class="data-table__date">
+                  {{ event.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}
+                </td>
+                <td data-label="Recibido" class="data-table__date">
+                  {{ event.receivedAt | date: 'dd/MM/yyyy HH:mm:ss' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-paginator
+        [page]="result.page"
+        [totalPages]="result.totalPages"
+        (pageChange)="page.set($event)"
+      />
+    }
+  }
+</section>

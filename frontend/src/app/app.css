@@ -1,0 +1,100 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-header {
+  color: var(--color-surface);
+  background: var(--color-brand-900);
+}
+
+.app-header__inner {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-3) 0;
+}
+
+.app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  justify-self: start;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-surface);
+  text-decoration: none;
+}
+
+.app-header__brand:hover {
+  color: var(--color-surface);
+}
+
+.app-header__logo {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.app-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.app-nav__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 3.25rem;
+  padding: var(--space-2) var(--space-1);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-header-link);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+}
+
+.app-nav__link:hover {
+  color: var(--color-surface);
+}
+
+.app-nav__link.is-active {
+  color: var(--color-surface);
+  border-bottom-color: var(--color-surface);
+}
+
+.app-header :focus-visible {
+  outline-color: var(--color-surface);
+  outline-offset: -3px;
+}
+
+.app-main {
+  padding-block: var(--space-6) var(--space-10);
+}
+
+@media (min-width: 640px) {
+  .app-header__inner {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    padding-block: 0;
+  }
+
+  .app-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-1);
+  }
+
+  .app-nav__link {
+    flex-direction: row;
+    gap: var(--space-2);
+    min-height: 4rem;
+    padding-inline: var(--space-4);
+    font-size: 1rem;
+  }
+
+  .app-main {
+    padding-block: var(--space-8) var(--space-10);
+  }
+}

@@ -1,0 +1,150 @@
+<section class="page page--narrow" aria-labelledby="register-title">
+  <h1 id="register-title" class="page__title">Registrar evento</h1>
+  <p class="page__intro">
+    Cargá un evento de la planta. Los eventos de calidad también generan un registro de auditoría.
+  </p>
+
+  <form class="card form" [formRoot]="registerForm">
+    <p class="form__note">
+      Los campos marcados con <span aria-hidden="true">*</span
+      ><span class="visually-hidden">asterisco</span> son obligatorios.
+    </p>
+
+    <div class="field">
+      <label class="field__label" for="eventId">
+        Identificador del evento (eventId)&nbsp;<span class="field__required" aria-hidden="true"
+          >*</span
+        >
+      </label>
+      <p id="eventId-help" class="field__help">
+        Identificador del equipo de origen, p. ej. EVT-1001. Para probar un duplicado, reenviá el
+        mismo identificador.
+      </p>
+      <input
+        id="eventId"
+        class="field__control field__control--code"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+        aria-required="true"
+        aria-describedby="eventId-help eventId-errors"
+        [attr.aria-invalid]="showsErrors(registerForm.eventId())"
+        [formField]="registerForm.eventId"
+      />
+      <app-field-errors id="eventId-errors" [state]="registerForm.eventId()" />
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="eventType">
+        Tipo de evento&nbsp;<span class="field__required" aria-hidden="true">*</span>
+      </label>
+      <p id="eventType-help" class="field__help">
+        Elegí Calidad cuando el evento deba quedar auditado.
+      </p>
+      <select
+        id="eventType"
+        class="field__control"
+        aria-describedby="eventType-help eventType-errors"
+        [attr.aria-invalid]="showsErrors(registerForm.eventType())"
+        [formField]="registerForm.eventType"
+      >
+        <option value="" disabled>Elegí un tipo de evento</option>
+        @for (option of eventTypeOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+      <app-field-errors id="eventType-errors" [state]="registerForm.eventType()" />
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="description">
+        Descripción&nbsp;<span class="field__required" aria-hidden="true">*</span>
+      </label>
+      <p id="description-help" class="field__help">
+        Qué ocurrió, en pocas palabras. P. ej.: Production line started.
+      </p>
+      <textarea
+        id="description"
+        class="field__control"
+        rows="4"
+        aria-required="true"
+        aria-describedby="description-help description-counter description-errors"
+        [attr.aria-invalid]="showsErrors(registerForm.description())"
+        [formField]="registerForm.description"
+      ></textarea>
+      <p id="description-counter" class="field__counter">
+        {{ registerForm.description().value().length }}/{{ descriptionMaxLength }}
+      </p>
+      <app-field-errors id="description-errors" [state]="registerForm.description()" />
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="timestamp">
+        Fecha y hora del evento
+        <span class="field__optional">(opcional)</span>
+      </label>
+      <p id="timestamp-help" class="field__help">
+        Si lo dejás vacío, se usa la fecha y hora del servidor al recibir el evento.
+      </p>
+      <input
+        id="timestamp"
+        class="field__control"
+        type="datetime-local"
+        step="1"
+        aria-describedby="timestamp-help timestamp-errors"
+        [attr.aria-invalid]="showsErrors(registerForm.timestamp())"
+        [formField]="registerForm.timestamp"
+      />
+      <app-field-errors id="timestamp-errors" [state]="registerForm.timestamp()" />
+    </div>
+
+    <div class="form__actions">
+      <button
+        type="submit"
+        class="button button--primary"
+        [attr.aria-disabled]="registerForm().invalid() ? 'true' : null"
+        [disabled]="registerForm().submitting()"
+      >
+        @if (registerForm().submitting()) {
+          <svg
+            class="icon icon--spin"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx="12" cy="12" r="9" stroke-opacity="0.25" />
+            <path d="M21 12a9 9 0 0 0-9-9" />
+          </svg>
+          Registrando…
+        } @else {
+          Registrar evento
+        }
+      </button>
+    </div>
+  </form>
+
+  @if (result(); as outcome) {
+    @if (outcome.ok) {
+      <app-status-message #resultMessage kind="success" class="register__result">
+        <p class="message__title">Evento {{ outcome.event.eventId }} registrado correctamente.</p>
+        @if (outcome.event.eventType === 'QUALITY') {
+          <p>Por ser de calidad, se generó su registro de auditoría.</p>
+        }
+        <p class="message__links">
+          <a routerLink="/events">Ver eventos registrados</a>
+          @if (outcome.event.eventType === 'QUALITY') {
+            <a routerLink="/audits">Ver auditorías</a>
+          }
+        </p>
+      </app-status-message>
+    } @else {
+      <app-status-message #resultMessage kind="error" class="register__result">
+        <p class="message__title">{{ outcome.error.message }}</p>
+      </app-status-message>
+    }
+  }
+</section>

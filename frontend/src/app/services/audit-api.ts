@@ -3,6 +3,7 @@ import { Service, Signal } from '@angular/core';
 import { API_PATHS } from '../models/api-paths';
 import { AuditResponse } from '../models/audit';
 import { PageQuery, PageResponse } from '../models/page';
+import { toPageParams } from './page-params';
 
 @Service()
 export class AuditApi {
@@ -10,7 +11,7 @@ export class AuditApi {
   page(query: Signal<PageQuery>): HttpResourceRef<PageResponse<AuditResponse> | undefined> {
     return httpResource<PageResponse<AuditResponse>>(() => ({
       url: API_PATHS.audits,
-      params: { page: query().page, size: query().size },
+      params: toPageParams(query()),
     }));
   }
 }

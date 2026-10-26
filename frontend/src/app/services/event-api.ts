@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { API_PATHS } from '../models/api-paths';
 import { EventRequest, EventResponse, RegisterResult } from '../models/event';
 import { PageQuery, PageResponse } from '../models/page';
+import { toPageParams } from './page-params';
 import { toUiError } from './ui-error-mapper';
 
 @Service()
@@ -23,7 +24,7 @@ export class EventApi {
   page(query: Signal<PageQuery>): HttpResourceRef<PageResponse<EventResponse> | undefined> {
     return httpResource<PageResponse<EventResponse>>(() => ({
       url: API_PATHS.events,
-      params: { page: query().page, size: query().size },
+      params: toPageParams(query()),
     }));
   }
 }

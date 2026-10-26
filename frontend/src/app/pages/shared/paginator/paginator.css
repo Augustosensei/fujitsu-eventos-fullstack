@@ -1,0 +1,34 @@
+.paginator {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'status status'
+    'prev next';
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.paginator__prev {
+  grid-area: prev;
+  justify-self: start;
+}
+
+.paginator__next {
+  grid-area: next;
+  justify-self: end;
+}
+
+.paginator__status {
+  grid-area: status;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .paginator {
+    grid-template-columns: auto auto auto;
+    grid-template-areas: 'prev status next';
+    justify-content: center;
+  }
+}

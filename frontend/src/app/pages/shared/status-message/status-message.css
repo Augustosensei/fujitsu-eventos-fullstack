@@ -1,0 +1,12 @@
+.message__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+}
+
+.message__body {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  min-width: 0;
+}

@@ -112,4 +112,14 @@ describe('EventApi', () => {
 
     expect(resource.value()).toEqual(PAGE);
   });
+
+  it('UI-12 given a query without size when the events page resource loads then only page is sent so the backend default applies', () => {
+    TestBed.runInInjectionContext(() => api.page(signal({ page: 3 })));
+    TestBed.tick();
+
+    const req = httpMock.expectOne((r) => r.url === '/api/events');
+    expect(req.request.params.keys()).toEqual(['page']);
+    expect(req.request.params.get('page')).toBe('3');
+    req.flush(PAGE);
+  });
 });

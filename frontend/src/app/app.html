@@ -1,1 +1,92 @@
-<router-outlet />
+<header class="app-header">
+  <div class="container app-header__inner">
+    <a class="app-header__brand" routerLink="/events/new">
+      <svg
+        class="app-header__logo"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M3 21V10l5 3V10l5 3V5h4l1 16" />
+        <path d="M3 21h18" />
+      </svg>
+      {{ appName }}
+    </a>
+    <nav class="app-nav" aria-label="Secciones">
+      <a
+        class="app-nav__link"
+        routerLink="/events/new"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 8v8M8 12h8" />
+        </svg>
+        Registrar
+      </a>
+      <a
+        class="app-nav__link"
+        routerLink="/events"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M9 6h11M9 12h11M9 18h11" />
+          <path d="M4 6h.01M4 12h.01M4 18h.01" />
+        </svg>
+        Eventos
+      </a>
+      <a
+        class="app-nav__link"
+        routerLink="/audits"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6l-7-3Z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+        Auditorías
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="container app-main">
+  <router-outlet />
+</main>

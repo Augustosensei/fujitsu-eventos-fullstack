@@ -1,0 +1,65 @@
+<section class="page" aria-labelledby="audits-title">
+  <h1 id="audits-title" class="page__title">Auditorías</h1>
+  <p class="page__intro">Cada evento de calidad (QUALITY) genera un registro de auditoría.</p>
+
+  @if (audits.isLoading()) {
+    <app-status-message kind="loading">Cargando auditorías…</app-status-message>
+  } @else if (error(); as failure) {
+    <app-status-message kind="error">
+      <p class="message__title">{{ failure.message }}</p>
+      <button type="button" class="button button--secondary" (click)="audits.reload()">
+        Reintentar
+      </button>
+    </app-status-message>
+  } @else if (audits.value(); as result) {
+    @if (result.totalElements === 0) {
+      <div class="card empty-state">
+        <app-status-message kind="info">
+          <p class="message__title">Todavía no hay auditorías.</p>
+          <p>Registrá un evento de tipo Calidad (QUALITY) para generar la primera.</p>
+        </app-status-message>
+        <a class="button button--primary" routerLink="/events/new">Registrar evento</a>
+      </div>
+    } @else {
+      <div class="card card--flush">
+        <table class="data-table">
+          <caption class="visually-hidden">
+            Auditorías, página
+            {{
+              result.page + 1
+            }}
+            de
+            {{
+              result.totalPages
+            }}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">N.º de auditoría</th>
+              <th scope="col">Identificador del evento</th>
+              <th scope="col">Fecha de auditoría</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (audit of result.content; track audit.id) {
+              <tr>
+                <td data-label="N.º de auditoría" class="data-table__number">{{ audit.id }}</td>
+                <td data-label="Identificador del evento" class="data-table__code">
+                  {{ audit.eventId }}
+                </td>
+                <td data-label="Fecha de auditoría" class="data-table__date">
+                  {{ audit.auditedAt | date: 'dd/MM/yyyy HH:mm:ss' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-paginator
+        [page]="result.page"
+        [totalPages]="result.totalPages"
+        (pageChange)="page.set($event)"
+      />
+    }
+  }
+</section>

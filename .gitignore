@@ -1,0 +1,6 @@
+.cursor/
+.dm/
+PROMPT-*.md
+.DS_Store
+.idea/
+.vscode/

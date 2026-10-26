@@ -1,5 +1,7 @@
 # Eventos de fábrica — Fullstack (Spring Boot + Angular)
 
+[![CI](https://github.com/Augustosensei/fujitsu-eventos-fullstack/actions/workflows/ci.yml/badge.svg)](https://github.com/Augustosensei/fujitsu-eventos-fullstack/actions/workflows/ci.yml)
+
 Solución de la prueba técnica *Desarrollador Fullstack v6.0*. Un backend recibe los eventos
 que envían los equipos de una fábrica (`PRODUCTION` y `QUALITY`), evita duplicados por
 `eventId` y audita los de calidad. Un frontend permite registrarlos, reenviar el mismo
@@ -42,7 +44,7 @@ empiecen con `cd`.
 
 | Herramienta | Versión | Para qué |
 |-------------|---------|----------|
-| JDK | 17 o superior | Backend. Probado con JDK 17.0.20.1, 21.0.1 y 25. Maven **no** hace falta: el repo trae el wrapper `./mvnw` (Maven 3.10.0). |
+| JDK | 17 o superior | Backend. La CI corre todas las pruebas con JDK 17 y 25 en cada push; también se probó a mano con 21.0.1. Maven **no** hace falta: el repo trae el wrapper `./mvnw` (Maven 3.10.0). |
 | Node.js | `^22.22.3 \|\| ^24.15.0 \|\| >=26.0.0` (rango `engines` de Angular CLI 22.2.4) | Frontend. Probado con Node 24.22.1 y npm 11.19.1. |
 | Docker | Docker Engine con el plugin Compose (`docker compose`) | Opcional: levantar todo con un comando. Probado con Engine 29.9.2 y Compose 5.6.1. |
 
@@ -210,6 +212,12 @@ npx ng build
 Reporte de cobertura: `frontend/coverage/frontend/index.html`.
 
 Ambos builds **fallan** si la cobertura de líneas baja del 100 %.
+
+La CI de GitHub Actions (`.github/workflows/ci.yml`) corre en cada push a `main` y en cada
+pull request: `./mvnw -B -ntp verify` con JDK 17 y con JDK 25 (Temurin), y lint, formato,
+tests y build del frontend con Node 24. Los resultados están en la pestaña
+[Actions](https://github.com/Augustosensei/fujitsu-eventos-fullstack/actions/workflows/ci.yml)
+del repositorio.
 
 | Capa | Herramienta | Qué cubre |
 |------|-------------|-----------|
@@ -404,6 +412,7 @@ al priorizar la claridad.
 | Paquete base `com.fujitsu.events`. | Agrupa todo el backend bajo un único espacio de nombres. |
 | Docker: dos imágenes multi-stage sin root + Compose con healthcheck. | Levantar todo con un comando y comprobar la solución sin instalar JDK ni Node. |
 | Repositorio público en GitHub. | Forma de entrega pedida por el enunciado. |
+| CI con GitHub Actions: backend con JDK 17 y 25, frontend con Node 24. | Demuestra en cada push que el backend funciona en el mínimo soportado (17) y en el JDK de desarrollo (25); un test JUnit no puede probarlo porque corre en una sola JVM. |
 
 ## Observabilidad
 
@@ -473,6 +482,5 @@ Capturas a 1280 px (escritorio) y 360 px (móvil).
   patrón outbox (misma transacción, entrega garantizada) en lugar de llamadas directas.
 - **Pruebas end-to-end** del flujo completo en navegador (p. ej. Playwright) contra el stack de
   Docker Compose.
-- **CI**: pipeline que ejecute `./mvnw verify`, lint + tests + build del frontend y el build de
-  las imágenes en cada push.
+- **CI**: sumar al workflow el build de las imágenes y el smoke de Docker Compose.
 - **Consultas**: filtros por tipo, rango de fechas o `eventId` en las listas.

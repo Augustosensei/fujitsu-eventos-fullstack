@@ -12,6 +12,7 @@ server:
     include-stacktrace: never
 
 app:
+  version: "@project.version@"
   pagination:
     default-size: ${APP_PAGINATION_DEFAULT_SIZE:20}
     max-size: ${APP_PAGINATION_MAX_SIZE:100}

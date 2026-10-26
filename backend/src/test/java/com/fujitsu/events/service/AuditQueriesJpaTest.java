@@ -13,7 +13,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
@@ -25,11 +24,13 @@ class AuditQueriesJpaTest {
     private static final Instant EARLIER = Instant.parse("2026-05-20T13:00:00Z");
     private static final Instant LATER = Instant.parse("2026-05-20T13:05:00Z");
 
-    @Autowired
-    private TestEntityManager entityManager;
+    private final TestEntityManager entityManager;
+    private final AuditService auditService;
 
-    @Autowired
-    private AuditService auditService;
+    AuditQueriesJpaTest(TestEntityManager entityManager, AuditService auditService) {
+        this.entityManager = entityManager;
+        this.auditService = auditService;
+    }
 
     @Test
     @DisplayName("AU-02 auditorías ordenadas por auditedAt descendente y desempate por id descendente")

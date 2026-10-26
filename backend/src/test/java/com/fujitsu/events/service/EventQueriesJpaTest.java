@@ -12,7 +12,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
@@ -24,11 +23,13 @@ class EventQueriesJpaTest {
     private static final Instant EARLIER = Instant.parse("2026-05-20T13:00:00Z");
     private static final Instant LATER = Instant.parse("2026-05-20T13:05:00Z");
 
-    @Autowired
-    private TestEntityManager entityManager;
+    private final TestEntityManager entityManager;
+    private final EventService eventService;
 
-    @Autowired
-    private EventService eventService;
+    EventQueriesJpaTest(TestEntityManager entityManager, EventService eventService) {
+        this.entityManager = entityManager;
+        this.eventService = eventService;
+    }
 
     @Test
     @DisplayName("LS-02 eventos ordenados por receivedAt descendente y desempate por id descendente")

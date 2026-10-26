@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -21,11 +20,13 @@ class ConstraintsJpaTest {
     private static final Instant NOW = Instant.parse("2026-05-20T13:00:00Z");
     private static final LocalDateTime TIMESTAMP = LocalDateTime.of(2026, 5, 20, 10, 0);
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
+    private final AuditRecordRepository auditRecordRepository;
 
-    @Autowired
-    private AuditRecordRepository auditRecordRepository;
+    ConstraintsJpaTest(EventRepository eventRepository, AuditRecordRepository auditRecordRepository) {
+        this.eventRepository = eventRepository;
+        this.auditRecordRepository = auditRecordRepository;
+    }
 
     @Test
     @DisplayName("AU-05 un segundo Event con el mismo eventId viola uk_events_event_id")

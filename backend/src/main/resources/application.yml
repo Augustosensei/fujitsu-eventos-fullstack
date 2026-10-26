@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: events
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-stacktrace: never
+
+app:
+  pagination:
+    default-size: ${APP_PAGINATION_DEFAULT_SIZE:20}
+    max-size: ${APP_PAGINATION_MAX_SIZE:100}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  pattern:
+    level: "%5p [%X{correlationId:-}]"

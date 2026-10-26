@@ -1,0 +1,14 @@
+package com.fujitsu.events.exception;
+
+public enum ErrorCode {
+    VALIDATION_ERROR,
+    MALFORMED_REQUEST,
+    INVALID_PAGINATION,
+    DUPLICATE_EVENT,
+    EVENT_NOT_FOUND,
+    RESOURCE_NOT_FOUND,
+    METHOD_NOT_ALLOWED,
+    UNSUPPORTED_MEDIA_TYPE,
+    NOT_ACCEPTABLE,
+    INTERNAL_ERROR
+}

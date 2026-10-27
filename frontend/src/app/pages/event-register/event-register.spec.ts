@@ -15,11 +15,8 @@ describe('EventRegister', () => {
   let fixture: ComponentFixture<EventRegister>;
   let httpMock: HttpTestingController;
   let host: HTMLElement;
-  let scrollIntoView: ReturnType<typeof vi.fn<HTMLElement['scrollIntoView']>>;
 
   beforeEach(async () => {
-    scrollIntoView = vi.fn<HTMLElement['scrollIntoView']>();
-    HTMLElement.prototype.scrollIntoView = scrollIntoView;
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
@@ -31,7 +28,6 @@ describe('EventRegister', () => {
 
   afterEach(() => {
     httpMock.verify();
-    delete (HTMLElement.prototype as Partial<HTMLElement>).scrollIntoView;
   });
 
   function control<T extends Control>(id: string): T {
@@ -146,23 +142,50 @@ describe('EventRegister', () => {
     expect(message.textContent).toContain(DUPLICATE_DETAIL);
   });
 
-  it('UI-02 given a success when the message is rendered then it is scrolled into view', async () => {
+  it('UI-20 given a success when the result is shown then it is a toast placed before the form with a close button', async () => {
     await fill(VALID);
 
     await submitAndFlush(null);
 
-    expect(scrollIntoView).toHaveBeenCalledOnce();
-    expect(scrollIntoView.mock.contexts[0]).toBe(host.querySelector('app-status-message'));
-    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' });
+    const toast = host.querySelector('.toast')!;
+    const form = host.querySelector('form')!;
+    expect(toast.querySelector('app-status-message')!.getAttribute('role')).toBe('status');
+    expect(toast.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(toast.querySelector('button')!.getAttribute('aria-label')).toBe('Cerrar aviso');
   });
 
-  it('UI-03 given a duplicate when the alert is rendered then it is scrolled into view', async () => {
+  it('UI-20 given a duplicate toast when the user closes it then it disappears and the values are kept', async () => {
     await fill(VALID);
+    await submitAndFlush({ detail: DUPLICATE_DETAIL, code: 'DUPLICATE_EVENT' }, 409);
+
+    host.querySelector<HTMLButtonElement>('.toast__close')!.click();
+    await fixture.whenStable();
+
+    expect(host.querySelector('.toast')).toBeNull();
+    expect(control('eventId').value).toBe('EVT-1001');
+  });
+
+  it('UI-20 given a toast is shown when the form is sent again then the new result replaces it', async () => {
+    await fill(VALID);
+    await submitAndFlush(null);
 
     await submitAndFlush({ detail: DUPLICATE_DETAIL, code: 'DUPLICATE_EVENT' }, 409);
 
-    expect(scrollIntoView).toHaveBeenCalledOnce();
-    expect(scrollIntoView.mock.contexts[0]).toBe(host.querySelector('app-status-message'));
+    const toasts = host.querySelectorAll('.toast');
+    expect(toasts.length).toBe(1);
+    expect(toasts[0].querySelector('app-status-message')!.getAttribute('role')).toBe('alert');
+    expect(toasts[0].textContent).not.toContain('registrado correctamente');
+  });
+
+  it('UI-20 given an invalid form when the user submits then the previous toast is removed', async () => {
+    await fill(VALID);
+    await submitAndFlush(null);
+
+    await type('eventId', '');
+    submitButton().click();
+    await fixture.whenStable();
+
+    expect(host.querySelector('.toast')).toBeNull();
   });
 
   it('UI-04 given a 400 with errors when submitting then each message appears under its field and clears when edited', async () => {
@@ -300,6 +323,9 @@ describe('EventRegister', () => {
     expect(select.value).toBe('');
     expect(text()).toContain('Identificador del equipo de origen, p. ej. EVT-1001');
     expect(text()).toContain('Si lo dejás vacío, se usa la fecha y hora del servidor');
+    expect(host.querySelector('.page__intro')!.textContent).toContain(
+      'Para probar la regla de duplicados, reenviá el mismo identificador.',
+    );
     expect(host.querySelector('.form__note .visually-hidden')!.textContent).toBe('asterisco');
   });
 

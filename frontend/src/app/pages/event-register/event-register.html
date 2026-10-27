@@ -1,11 +1,56 @@
-<section class="page page--narrow" aria-labelledby="register-title">
+<div class="toast-region">
+  @if (result(); as outcome) {
+    <div class="toast">
+      @if (outcome.ok) {
+        <app-status-message kind="success">
+          <p class="message__title">Evento {{ outcome.event.eventId }} registrado correctamente.</p>
+          @if (outcome.event.eventType === 'QUALITY') {
+            <p>Por ser de calidad, se generó su registro de auditoría.</p>
+          }
+          <p class="message__links">
+            <a routerLink="/events">Ver eventos registrados</a>
+            @if (outcome.event.eventType === 'QUALITY') {
+              <a routerLink="/audits">Ver auditorías</a>
+            }
+          </p>
+        </app-status-message>
+      } @else {
+        <app-status-message kind="error">
+          <p class="message__title">{{ outcome.error.message }}</p>
+        </app-status-message>
+      }
+      <button
+        type="button"
+        class="toast__close"
+        aria-label="Cerrar aviso"
+        (click)="dismissResult()"
+      >
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </div>
+  }
+</div>
+
+<section class="page page--narrow register" aria-labelledby="register-title">
   <h1 id="register-title" class="page__title">Registrar evento</h1>
   <p class="page__intro">
-    Cargá un evento de la planta. Los eventos de calidad también generan un registro de auditoría.
+    Cargá un evento de la planta. Para probar la regla de duplicados, reenviá el mismo
+    identificador.
   </p>
 
-  <form class="card form" [formRoot]="registerForm">
-    <p class="form__note">
+  <form class="card form register__form" [formRoot]="registerForm">
+    <p class="form__note register__wide">
       Los campos marcados con <span aria-hidden="true">*</span
       ><span class="visually-hidden">asterisco</span> son obligatorios.
     </p>
@@ -17,8 +62,7 @@
         >
       </label>
       <p id="eventId-help" class="field__help">
-        Identificador del equipo de origen, p. ej. EVT-1001. Para probar un duplicado, reenviá el
-        mismo identificador.
+        Identificador del equipo de origen, p. ej. EVT-1001.
       </p>
       <input
         id="eventId"
@@ -56,25 +100,27 @@
       <app-field-errors id="eventType-errors" [state]="registerForm.eventType()" />
     </div>
 
-    <div class="field">
+    <div class="field register__wide">
       <label class="field__label" for="description">
         Descripción&nbsp;<span class="field__required" aria-hidden="true">*</span>
       </label>
-      <p id="description-help" class="field__help">
-        Qué ocurrió, en pocas palabras. P. ej.: Production line started.
-      </p>
+      <div class="register__help-row">
+        <p id="description-help" class="field__help">
+          Qué ocurrió, en pocas palabras. P. ej.: Production line started.
+        </p>
+        <p id="description-counter" class="field__counter">
+          {{ registerForm.description().value().length }}/{{ descriptionMaxLength }}
+        </p>
+      </div>
       <textarea
         id="description"
         class="field__control"
-        rows="4"
+        rows="3"
         aria-required="true"
         aria-describedby="description-help description-counter description-errors"
         [attr.aria-invalid]="showsErrors(registerForm.description())"
         [formField]="registerForm.description"
       ></textarea>
-      <p id="description-counter" class="field__counter">
-        {{ registerForm.description().value().length }}/{{ descriptionMaxLength }}
-      </p>
       <app-field-errors id="description-errors" [state]="registerForm.description()" />
     </div>
 
@@ -84,7 +130,7 @@
         <span class="field__optional">(opcional)</span>
       </label>
       <p id="timestamp-help" class="field__help">
-        Si lo dejás vacío, se usa la fecha y hora del servidor al recibir el evento.
+        Si lo dejás vacío, se usa la fecha y hora del servidor.
       </p>
       <input
         id="timestamp"
@@ -126,25 +172,4 @@
       </button>
     </div>
   </form>
-
-  @if (result(); as outcome) {
-    @if (outcome.ok) {
-      <app-status-message #resultMessage kind="success" class="register__result">
-        <p class="message__title">Evento {{ outcome.event.eventId }} registrado correctamente.</p>
-        @if (outcome.event.eventType === 'QUALITY') {
-          <p>Por ser de calidad, se generó su registro de auditoría.</p>
-        }
-        <p class="message__links">
-          <a routerLink="/events">Ver eventos registrados</a>
-          @if (outcome.event.eventType === 'QUALITY') {
-            <a routerLink="/audits">Ver auditorías</a>
-          }
-        </p>
-      </app-status-message>
-    } @else {
-      <app-status-message #resultMessage kind="error" class="register__result">
-        <p class="message__title">{{ outcome.error.message }}</p>
-      </app-status-message>
-    }
-  }
 </section>

@@ -394,6 +394,7 @@ al priorizar la claridad.
 |----------|---------|
 | Tres rutas con menú: registrar, eventos, auditorías. | Separa las tareas; cada pantalla tiene su título de pestaña. |
 | Tras un registro exitoso el formulario **conserva** los valores. | El enunciado pide poder reenviar el mismo `eventId` para probar la regla de duplicados. |
+| El resultado del envío se muestra en un aviso flotante arriba a la derecha (`position: sticky`), que queda hasta cerrarlo o hasta el próximo envío; los errores de cada campo siguen debajo del campo. | El usuario ve el resultado sin bajar ni perder de vista el formulario, y puede reenviar enseguida para probar el duplicado. El aviso no se cierra solo, así hay tiempo de leerlo y usar sus enlaces. |
 | Validaciones locales espejo del backend (incluido el recorte del `eventId`); el backend sigue siendo la fuente de verdad. | Feedback inmediato sin depender de un request; los errores del servidor también se muestran bajo cada campo. |
 | Con el formulario inválido, el botón se ve deshabilitado (`aria-disabled`) pero al presionarlo marca los errores y lleva el foco al primer campo inválido; durante el envío está deshabilitado de verdad. | El usuario siempre sabe qué falta, y no hay doble envío. |
 | `timestamp` vacío no se envía. | Así lo asigna el servidor. |
@@ -445,16 +446,22 @@ al priorizar la claridad.
 | ![Registrar evento, escritorio](docs/screenshots/registrar-1280.png) | ![Eventos, escritorio](docs/screenshots/eventos-1280.png) | ![Auditorías, escritorio](docs/screenshots/auditoria-1280.png) |
 | ![Registrar evento, móvil](docs/screenshots/registrar-360.png) | ![Eventos, móvil](docs/screenshots/eventos-360.png) | ![Auditorías, móvil](docs/screenshots/auditoria-360.png) |
 
-Capturas a 1280 px (escritorio) y 360 px (móvil).
+Capturas a 1280 px (escritorio) y 360 px (móvil). Resultado de un registro, como aviso
+flotante:
+
+![Aviso de evento registrado, escritorio](docs/screenshots/registrar-aviso-1280.png)
 
 - **Responsive, mobile-first**: diseño base para 360 px, cortes en 640 px y 1024 px, contenido
   centrado con un máximo de 1120 px. En pantallas angostas la navegación son tres pestañas de
   igual ancho y cada fila de las tablas se muestra como tarjeta con la etiqueta de cada dato.
-  Sin scroll horizontal en 360, 768 ni 1280 px (verificado con capturas).
+  Desde 1024 px el formulario de registro usa dos columnas y entra completo, con el botón, en
+  una ventana de 1280×720. Sin scroll horizontal en 360, 768 ni 1280 px (verificado con capturas).
 - **Pensada para un usuario común**: ayuda y ejemplo en cada campo, tipos con texto amigable
   ("Calidad (QUALITY): genera auditoría"), contador de caracteres, errores bajo cada campo,
-  resultado con el próximo paso ("Ver eventos registrados", "Ver auditorías"), duplicado
-  explicado, estados de carga, vacío (con botón para registrar) y error (con "Reintentar").
+  resultado en un aviso arriba a la derecha que queda a la vista aunque la página esté
+  desplazada, con el próximo paso ("Ver eventos registrados", "Ver auditorías") y botón para
+  cerrarlo, duplicado explicado, estados de carga, vacío (con botón para registrar) y error
+  (con "Reintentar").
 - **Paleta azul** definida como variables CSS en `frontend/src/styles.css`:
 
   | Uso | Color |

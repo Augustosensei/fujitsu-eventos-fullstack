@@ -1,12 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Injector,
-  afterNextRender,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FieldTree,
   FormField,
@@ -80,10 +72,6 @@ function eventIdErrors(rawEventId: string): ValidationError.WithoutFieldTree[] {
 })
 export class EventRegister {
   private readonly eventApi = inject(EventApi);
-  private readonly injector = inject(Injector);
-  private readonly resultMessage = viewChild.required('resultMessage', {
-    read: ElementRef<HTMLElement>,
-  });
 
   protected readonly eventTypeOptions = EVENT_TYPE_OPTIONS;
   protected readonly descriptionMaxLength = DESCRIPTION_MAX_LENGTH;
@@ -120,13 +108,14 @@ export class EventRegister {
     return state.touched() && state.invalid();
   }
 
+  protected dismissResult(): void {
+    this.result.set(null);
+  }
+
   private async register(): Promise<ValidationError.WithOptionalFieldTree[]> {
     this.result.set(null);
     const result = await this.eventApi.register(this.toRequest());
     this.result.set(result);
-    afterNextRender(() => this.resultMessage().nativeElement.scrollIntoView({ block: 'nearest' }), {
-      injector: this.injector,
-    });
     return result.ok ? [] : this.toFieldErrors(result.error);
   }
 

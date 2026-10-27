@@ -24,6 +24,7 @@
   /* Decorative only (exempt from AA): derived from the tokens above. */
   --color-border: color-mix(in srgb, var(--color-border-strong) 30%, var(--color-surface));
   --shadow-card: 0 1px 3px color-mix(in srgb, var(--color-brand-900) 10%, transparent);
+  --shadow-toast: 0 8px 24px color-mix(in srgb, var(--color-brand-900) 18%, transparent);
 
   --font-sans:
     system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
@@ -46,6 +47,7 @@
   --target-min: 2.75rem;
   --container-max: 70rem;
   --form-max: 40rem;
+  --form-wide-max: 56rem;
 }
 
 *,
@@ -375,6 +377,12 @@ textarea.field__control {
 .message--error a {
   color: inherit;
   font-weight: 600;
+}
+
+.message__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
 }
 
 .message--info {

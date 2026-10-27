@@ -55,49 +55,52 @@
       ><span class="visually-hidden">asterisco</span> son obligatorios.
     </p>
 
-    <div class="field">
-      <label class="field__label" for="eventId">
-        Identificador del evento (eventId)&nbsp;<span class="field__required" aria-hidden="true"
-          >*</span
-        >
-      </label>
-      <p id="eventId-help" class="field__help">
-        Identificador del equipo de origen, p. ej. EVT-1001.
-      </p>
-      <input
-        id="eventId"
-        class="field__control field__control--code"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-        aria-required="true"
-        aria-describedby="eventId-help eventId-errors"
-        [attr.aria-invalid]="showsErrors(registerForm.eventId())"
-        [formField]="registerForm.eventId"
-      />
-      <app-field-errors id="eventId-errors" [state]="registerForm.eventId()" />
-    </div>
+    <div class="register__pairs register__wide">
+      <div class="field register__pair">
+        <label class="field__label" for="eventId">
+          Identificador del evento (eventId)&nbsp;<span class="field__required" aria-hidden="true"
+            >*</span
+          >
+        </label>
+        <p id="eventId-help" class="field__help">
+          Identificador del evento en el sistema de origen, p. ej.
+          <span class="register__example">EVT-1001.</span>
+        </p>
+        <input
+          id="eventId"
+          class="field__control field__control--code"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          aria-required="true"
+          aria-describedby="eventId-help eventId-errors"
+          [attr.aria-invalid]="showsErrors(registerForm.eventId())"
+          [formField]="registerForm.eventId"
+        />
+        <app-field-errors id="eventId-errors" [state]="registerForm.eventId()" />
+      </div>
 
-    <div class="field">
-      <label class="field__label" for="eventType">
-        Tipo de evento&nbsp;<span class="field__required" aria-hidden="true">*</span>
-      </label>
-      <p id="eventType-help" class="field__help">
-        Elegí Calidad cuando el evento deba quedar auditado.
-      </p>
-      <select
-        id="eventType"
-        class="field__control"
-        aria-describedby="eventType-help eventType-errors"
-        [attr.aria-invalid]="showsErrors(registerForm.eventType())"
-        [formField]="registerForm.eventType"
-      >
-        <option value="" disabled>Elegí un tipo de evento</option>
-        @for (option of eventTypeOptions; track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-        }
-      </select>
-      <app-field-errors id="eventType-errors" [state]="registerForm.eventType()" />
+      <div class="field register__pair">
+        <label class="field__label" for="eventType">
+          Tipo de evento&nbsp;<span class="field__required" aria-hidden="true">*</span>
+        </label>
+        <p id="eventType-help" class="field__help">
+          Elegí Calidad cuando el evento deba quedar auditado.
+        </p>
+        <select
+          id="eventType"
+          class="field__control"
+          aria-describedby="eventType-help eventType-errors"
+          [attr.aria-invalid]="showsErrors(registerForm.eventType())"
+          [formField]="registerForm.eventType"
+        >
+          <option value="" disabled>Elegí un tipo de evento</option>
+          @for (option of eventTypeOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        <app-field-errors id="eventType-errors" [state]="registerForm.eventType()" />
+      </div>
     </div>
 
     <div class="field register__wide">

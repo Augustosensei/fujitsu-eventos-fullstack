@@ -55,6 +55,15 @@
   align-content: start;
 }
 
+.register__example {
+  white-space: nowrap;
+}
+
+.register__pairs {
+  display: grid;
+  gap: inherit;
+}
+
 .register__help-row {
   display: flex;
   align-items: baseline;
@@ -80,6 +89,20 @@
 
   .register__wide {
     grid-column: 1 / -1;
+  }
+
+  /* Side-by-side fields share label, help, control and error rows, so the controls stay aligned
+     whatever the length of each help text or error. The row gap matches the field gap: a
+     different one would be spread over the subgrid rows. */
+  .register__pairs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+    row-gap: var(--space-1);
+  }
+
+  .register__pair {
+    grid-row: span 4;
+    grid-template-rows: subgrid;
   }
 
   .register__form .form__actions {

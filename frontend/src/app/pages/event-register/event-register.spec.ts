@@ -321,7 +321,9 @@ describe('EventRegister', () => {
       'Calidad (QUALITY): genera auditoría',
     ]);
     expect(select.value).toBe('');
-    expect(text()).toContain('Identificador del equipo de origen, p. ej. EVT-1001');
+    expect(host.querySelector('#eventId-help')!.textContent!.replace(/\s+/g, ' ').trim()).toBe(
+      'Identificador del evento en el sistema de origen, p. ej. EVT-1001.',
+    );
     expect(text()).toContain('Si lo dejás vacío, se usa la fecha y hora del servidor');
     expect(host.querySelector('.page__intro')!.textContent).toContain(
       'Para probar la regla de duplicados, reenviá el mismo identificador.',

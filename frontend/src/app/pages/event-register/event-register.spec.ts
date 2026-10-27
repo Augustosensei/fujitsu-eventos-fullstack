@@ -11,12 +11,17 @@ type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 const DUPLICATE_DETAIL =
   "El evento con eventId 'EVT-1001' ya estaba registrado; no se guardó ni se auditó de nuevo.";
 
+const OPENED_AT = new Date(2026, 4, 20, 9, 5, 7, 250);
+const OPENED_AT_INPUT = '2026-05-20T09:05:07';
+
 describe('EventRegister', () => {
   let fixture: ComponentFixture<EventRegister>;
   let httpMock: HttpTestingController;
   let host: HTMLElement;
 
   beforeEach(async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(OPENED_AT);
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
@@ -28,6 +33,7 @@ describe('EventRegister', () => {
 
   afterEach(() => {
     httpMock.verify();
+    vi.useRealTimers();
   });
 
   function control<T extends Control>(id: string): T {
@@ -242,17 +248,18 @@ describe('EventRegister', () => {
     expect(text()).not.toContain('interno');
   });
 
-  it('UI-06 given a successful registration when the same form is sent again then the values are kept and the 409 is visible', async () => {
+  it('UI-06 given a successful registration when the same form is sent again later then the same values are resent and the 409 is visible', async () => {
     await fill(VALID);
-    await submitAndFlush(null);
+    const first = await submitAndFlush(null);
 
     expect(control('eventId').value).toBe('EVT-1001');
     expect(control('eventType').value).toBe('QUALITY');
     expect(control('description').value).toBe('Quality check');
 
+    vi.setSystemTime(new Date(2026, 4, 20, 9, 40, 0));
     const resent = await submitAndFlush({ detail: DUPLICATE_DETAIL, code: 'DUPLICATE_EVENT' }, 409);
 
-    expect(resent.eventId).toBe('EVT-1001');
+    expect(resent).toEqual(first);
     expect(text()).toContain(DUPLICATE_DETAIL);
   });
 
@@ -273,8 +280,8 @@ describe('EventRegister', () => {
     expect(submitButton().disabled).toBe(false);
   });
 
-  it('UI-08 given an empty timestamp when submitting then it is omitted from the payload', async () => {
-    await fill(VALID);
+  it('UI-08 given the user clears the timestamp when submitting then it is omitted from the payload', async () => {
+    await fill({ ...VALID, timestamp: '' });
 
     const sent = await submitAndFlush(null);
 
@@ -302,6 +309,32 @@ describe('EventRegister', () => {
     expect(control('timestamp').getAttribute('step')).toBe('1');
   });
 
+  it("UI-21 given the form when it renders then the timestamp holds the browser's local date and time to the second and is sent untouched", async () => {
+    expect(control('timestamp').value).toBe(OPENED_AT_INPUT);
+
+    await fill(VALID);
+    const sent = await submitAndFlush(null);
+
+    expect(sent.timestamp).toBe(OPENED_AT_INPUT);
+  });
+
+  it('UI-21 given time has passed when the user presses Ahora then the field and the payload take the new local time without submitting', async () => {
+    await fill(VALID);
+    vi.setSystemTime(new Date(2026, 4, 20, 9, 30, 42, 900));
+
+    const now = host.querySelector<HTMLButtonElement>('.register__control-row button')!;
+    expect(now.type).toBe('button');
+    expect(now.textContent!.trim()).toBe('Ahora');
+    expect(now.getAttribute('aria-label')).toBe('Ahora: poner la fecha y hora actuales');
+    now.click();
+    await fixture.whenStable();
+
+    httpMock.expectNone('/api/events');
+    expect(control('timestamp').value).toBe('2026-05-20T09:30:42');
+    const sent = await submitAndFlush(null);
+    expect(sent.timestamp).toBe('2026-05-20T09:30:42');
+  });
+
   it('UI-13 given the description when the user types then the counter shows n/500', async () => {
     const counter = () => host.querySelector('#description-counter')!.textContent!.trim();
     expect(counter()).toBe('0/500');
@@ -324,7 +357,9 @@ describe('EventRegister', () => {
     expect(host.querySelector('#eventId-help')!.textContent!.replace(/\s+/g, ' ').trim()).toBe(
       'Identificador del evento en el sistema de origen, p. ej. EVT-1001.',
     );
-    expect(text()).toContain('Si lo dejás vacío, se usa la fecha y hora del servidor');
+    expect(host.querySelector('#timestamp-help')!.textContent!.replace(/\s+/g, ' ').trim()).toBe(
+      'Viene con la fecha y hora actuales y podés cambiarla. Si la borrás, la asigna el servidor.',
+    );
     expect(host.querySelector('.page__intro')!.textContent).toContain(
       'Para probar la regla de duplicados, reenviá el mismo identificador.',
     );

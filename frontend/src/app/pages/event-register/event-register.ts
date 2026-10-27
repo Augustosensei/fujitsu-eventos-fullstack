@@ -23,6 +23,7 @@ import {
   strip,
 } from '../../models/event-constraints';
 import { EVENT_TYPE_OPTIONS, EventType } from '../../models/event-type';
+import { toLocalDateTimeInput } from '../../models/local-date-time';
 import { UiError } from '../../models/ui-error';
 import { EventApi } from '../../services/event-api';
 import { FieldErrors } from '../shared/field-errors/field-errors';
@@ -81,7 +82,7 @@ export class EventRegister {
     eventId: '',
     eventType: '',
     description: '',
-    timestamp: '',
+    timestamp: toLocalDateTimeInput(new Date()),
   });
 
   protected readonly registerForm = form(
@@ -110,6 +111,10 @@ export class EventRegister {
 
   protected dismissResult(): void {
     this.result.set(null);
+  }
+
+  protected setTimestampToNow(): void {
+    this.registerForm.timestamp().value.set(toLocalDateTimeInput(new Date()));
   }
 
   private async register(): Promise<ValidationError.WithOptionalFieldTree[]> {

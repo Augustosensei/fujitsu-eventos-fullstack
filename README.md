@@ -134,7 +134,7 @@ auditoría, ni desde la UI ni llamando a la API directamente.
 1. Abrir <http://localhost:4200> (abre **Registrar evento**).
 2. Completar **Identificador del evento** con `EVT-2001`, elegir **Calidad (QUALITY): genera
    auditoría**, escribir una descripción (p. ej. `Quality inspection failed`) y dejar la fecha
-   vacía.
+   como viene (la hora actual).
 3. Presionar **Registrar evento**. Aparece *"Evento EVT-2001 registrado correctamente."* y
    *"Por ser de calidad, se generó su registro de auditoría."*
 4. Presionar **Registrar evento** otra vez sin tocar nada (el formulario conserva los valores
@@ -314,8 +314,10 @@ admiten las dos cosas:
 - Las fechas futuras o antiguas se aceptan: el enunciado no fija un rango.
 - El valor que asigna el servidor usa la zona horaria del sistema donde corre. En Docker es
   UTC salvo que se defina la variable `TZ`.
-- En la UI el campo **Fecha y hora del evento** es opcional (`datetime-local` con segundos). Si
-  queda vacío, el frontend no lo envía y lo asigna el servidor.
+- En la UI el campo **Fecha y hora del evento** (`datetime-local` con segundos) viene
+  completo con la fecha y hora actuales del navegador, se puede cambiar y el botón **Ahora**
+  lo vuelve a poner en la hora actual. Sigue siendo opcional: si se borra, el frontend no lo
+  envía y lo asigna el servidor.
 
 `receivedAt` (recepción) y `auditedAt` (auditoría) los asigna siempre el servidor como
 instantes UTC. La UI los muestra con formato `dd/MM/yyyy HH:mm:ss` en la hora local del
@@ -403,7 +405,7 @@ al priorizar la claridad.
 | Las tablas de eventos y auditorías piden 10 filas por página (`size=10`); la API mantiene su valor por defecto (20) para quien la use directo. | Con 10 filas la tabla entra casi completa en una notebook (medido: 10 filas visibles en 1440×800, 9 en 1280×720) y el paginador queda cerca; el tamaño de página es una decisión de la pantalla, no del contrato de la API. |
 | Validaciones locales espejo del backend (incluido el recorte del `eventId`); el backend sigue siendo la fuente de verdad. | Feedback inmediato sin depender de un request; los errores del servidor también se muestran bajo cada campo. |
 | Con el formulario inválido, el botón se ve deshabilitado (`aria-disabled`) pero al presionarlo marca los errores y lleva el foco al primer campo inválido; durante el envío está deshabilitado de verdad. | El usuario siempre sabe qué falta, y no hay doble envío. |
-| `timestamp` vacío no se envía. | Así lo asigna el servidor. |
+| La fecha del evento viene con la hora actual del navegador, editable, con un botón **Ahora** para actualizarla; si se borra no se envía y la asigna el servidor. | La fecha queda en la hora local de quien carga el evento, igual que **Recibido**; si la asignara el servidor, en Docker (UTC) quedaría corrida respecto de la hora local. **Ahora** evita que quede la hora en que se abrió la pantalla, y reenviar sin tocar nada manda los mismos datos para probar el duplicado. |
 | Servicios `EventApi` y `AuditApi`; `provideHttpClient()` sin `withFetch()`. | Nombres que no chocan con globales del DOM (`Event`). En Angular 22 `withFetch()` está deprecado porque `fetch` ya es el backend por defecto (hay un test que lo verifica). |
 | CSS propio, sin librerías de UI. | Es suficiente para tres pantallas y evita dependencias que el enunciado no pide. |
 
@@ -464,7 +466,8 @@ flotante:
   Desde 1024 px el formulario de registro usa dos columnas y entra completo, con el botón, en
   una ventana de 1280×720. Sin scroll horizontal en 360, 768 ni 1280 px (verificado con capturas).
 - **Pensada para un usuario común**: ayuda y ejemplo en cada campo, tipos con texto amigable
-  ("Calidad (QUALITY): genera auditoría"), contador de caracteres, errores bajo cada campo,
+  ("Calidad (QUALITY): genera auditoría"), fecha ya cargada con la hora actual (y botón
+  **Ahora** para actualizarla), contador de caracteres, errores bajo cada campo,
   resultado en un aviso arriba a la derecha que queda a la vista aunque la página esté
   desplazada, con el próximo paso ("Ver eventos registrados", "Ver auditorías") y botón para
   cerrarlo, duplicado explicado, estados de carga, vacío (con botón para registrar) y error

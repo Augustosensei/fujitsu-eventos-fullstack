@@ -133,17 +133,27 @@
         <span class="field__optional">(opcional)</span>
       </label>
       <p id="timestamp-help" class="field__help">
-        Si lo dejás vacío, se usa la fecha y hora del servidor.
+        Viene con la fecha y hora actuales y podés cambiarla. Si la borrás, la asigna el servidor.
       </p>
-      <input
-        id="timestamp"
-        class="field__control"
-        type="datetime-local"
-        step="1"
-        aria-describedby="timestamp-help timestamp-errors"
-        [attr.aria-invalid]="showsErrors(registerForm.timestamp())"
-        [formField]="registerForm.timestamp"
-      />
+      <div class="register__control-row">
+        <input
+          id="timestamp"
+          class="field__control"
+          type="datetime-local"
+          step="1"
+          aria-describedby="timestamp-help timestamp-errors"
+          [attr.aria-invalid]="showsErrors(registerForm.timestamp())"
+          [formField]="registerForm.timestamp"
+        />
+        <button
+          type="button"
+          class="button button--secondary"
+          aria-label="Ahora: poner la fecha y hora actuales"
+          (click)="setTimestampToNow()"
+        >
+          Ahora
+        </button>
+      </div>
       <app-field-errors id="timestamp-errors" [state]="registerForm.timestamp()" />
     </div>
 

@@ -75,6 +75,25 @@
   flex: none;
 }
 
+/* The basis keeps the whole date and time with seconds visible; below it the button wraps.
+   min-width: 0 stops the input's intrinsic width from widening the card on narrow screens. */
+.register__control-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.register__control-row .field__control {
+  flex: 1 1 15rem;
+  min-width: 0;
+}
+
+.register__control-row .button {
+  flex: none;
+}
+
 @media (min-width: 1024px) {
   .register {
     gap: var(--space-4);

@@ -14,8 +14,8 @@ function page(pageNumber: number, totalPages: number): PageResponse<AuditRespons
   return {
     content: [AUDIT],
     page: pageNumber,
-    size: 20,
-    totalElements: totalPages * 20,
+    size: 10,
+    totalElements: totalPages * 10,
     totalPages,
   };
 }
@@ -46,11 +46,22 @@ describe('AuditList', () => {
   }
 
   async function respond(pageNumber: number, body: object, status = 200): Promise<void> {
-    httpMock
-      .expectOne((r) => r.url === '/api/audits' && r.params.get('page') === String(pageNumber))
-      .flush(body, { status, statusText: String(status) });
+    const req = httpMock.expectOne(
+      (r) => r.url === '/api/audits' && r.params.get('page') === String(pageNumber),
+    );
+    expect(req.request.params.get('size')).toBe('10');
+    req.flush(body, { status, statusText: String(status) });
     await fixture.whenStable();
   }
+
+  it('UI-10 given the audits page when it loads then it asks for 10 rows of the first page', async () => {
+    const req = httpMock.expectOne((r) => r.url === '/api/audits');
+
+    expect(req.request.params.get('page')).toBe('0');
+    expect(req.request.params.get('size')).toBe('10');
+    req.flush(page(0, 1));
+    await fixture.whenStable();
+  });
 
   it('UI-10 given the request is in flight when the page renders then a loading message is shown', async () => {
     expect(text()).toContain('Cargando auditorías…');

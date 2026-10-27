@@ -29,7 +29,7 @@ function page(
   pageNumber: number,
   totalPages: number,
 ): PageResponse<EventResponse> {
-  return { content, page: pageNumber, size: 20, totalElements: totalPages * 20, totalPages };
+  return { content, page: pageNumber, size: 10, totalElements: totalPages * 10, totalPages };
 }
 
 describe('EventList', () => {
@@ -61,7 +61,7 @@ describe('EventList', () => {
     const req = httpMock.expectOne(
       (r) => r.url === '/api/events' && r.params.get('page') === String(pageNumber),
     );
-    expect(req.request.params.has('size')).toBe(false);
+    expect(req.request.params.get('size')).toBe('10');
     req.flush(body, { status, statusText: String(status) });
     await fixture.whenStable();
   }
@@ -74,6 +74,15 @@ describe('EventList', () => {
       ]),
     );
   }
+
+  it('UI-09 given the events page when it loads then it asks for 10 rows of the first page', async () => {
+    const req = httpMock.expectOne((r) => r.url === '/api/events');
+
+    expect(req.request.params.get('page')).toBe('0');
+    expect(req.request.params.get('size')).toBe('10');
+    req.flush(page([], 0, 0));
+    await fixture.whenStable();
+  });
 
   it('UI-09 given the request is in flight when the page renders then a loading message is shown', async () => {
     expect(host.querySelector('app-status-message')!.getAttribute('role')).toBe('status');

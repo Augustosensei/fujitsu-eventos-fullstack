@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(PaginationProperties.class)
+@EnableConfigurationProperties({AppProperties.class, PaginationProperties.class})
 public class AppConfig {
 
     @Bean

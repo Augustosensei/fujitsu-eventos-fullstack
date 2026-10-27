@@ -50,8 +50,9 @@ empiecen con `cd`.
 
 Versiones resueltas (las últimas estables al construir el proyecto): Spring Boot 4.1.2,
 Angular 22.2.4, springdoc-openapi 3.2.0, MapStruct 1.6.3, lombok-mapstruct-binding 0.2.0,
-JaCoCo 0.8.16, angular-eslint 22.6.0, `@vitest/coverage-v8` 5.0.5. Lombok y el resto de las
-dependencias de Spring las fija Spring Boot.
+JaCoCo 0.8.16, angular-eslint 22.6.0, `@vitest/coverage-v8` 5.0.5, vite 8.3.5 (forzada, ver
+[Decisiones](#build-calidad-y-entrega)). Lombok y el resto de las dependencias de Spring las fija
+Spring Boot.
 
 ## Ejecutar
 
@@ -411,6 +412,7 @@ al priorizar la claridad.
 | Decisión | Por qué |
 |----------|---------|
 | Spring Boot 4 y Angular 22 (las últimas estables); backend compilado para Java 17 (`--release 17`) y desarrollado con Java 25 LTS. | Java 17 es el mínimo que admite Spring Boot 4: así el backend corre con cualquier JDK desde 17 sin perder records, `sealed` ni `switch` como expresión. Las imágenes Docker usan Java 25. |
+| `overrides` en `frontend/package.json` fuerza `vite` 8.3.5 dentro de `@angular/build` 22.2.4, que trae la 8.3.0. | La 8.3.0 tiene avisos de seguridad de su servidor de desarrollo (`npm audit`: 1 alto). Con la 8.3.5, la misma que ya usa Vitest, `npm ci` no reporta vulnerabilidades y los tests, el build y `ng serve` funcionan igual. Se quita cuando Angular publique una versión que la incluya. |
 | Maven con wrapper (`./mvnw`) y Maven Enforcer (Java ≥ 17, Maven ≥ 3.9, sin versiones duplicadas, sin SNAPSHOT). Con JDK 23 o superior, un perfil (`jdk23-unsafe-memory-access`) compila en un proceso aparte con `--sun-misc-unsafe-memory-access=allow`. | Build reproducible sin instalar Maven. El perfil evita el aviso de `sun.misc.Unsafe` que Lombok produce en JDK recientes; esa opción no existe antes de JDK 23, por eso no puede ir fija para todas las versiones. |
 | Lombok solo para `@RequiredArgsConstructor` (inyección por constructor), `@Getter` + constructor protegido en entidades, `@Getter` en la excepción base (para su `ErrorCode`) y `@Slf4j`; prohibidos `@Data`, `@Setter`, `@Builder` y similares (`lombok.config`). | Menos código repetido sin perder inmutabilidad: las entidades no tienen setters y los datos viajan en records. |
 | Cobertura mínima 100 % de líneas en backend y frontend. | Cada línea de producción tiene al menos un test que la ejecuta; las exclusiones están listadas en [Pruebas](#pruebas). |

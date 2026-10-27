@@ -17,6 +17,12 @@ app:
     default-size: ${APP_PAGINATION_DEFAULT_SIZE:20}
     max-size: ${APP_PAGINATION_MAX_SIZE:100}
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 management:
   endpoints:
     web:

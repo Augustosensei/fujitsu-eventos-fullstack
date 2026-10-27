@@ -1,5 +1,6 @@
 package com.fujitsu.events.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasKey;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -9,13 +10,24 @@ import com.fujitsu.events.repository.AuditRecordRepository;
 import com.fujitsu.events.repository.EventRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.test.web.servlet.MockMvc;
 
 class PlatformEndpointsIntegrationTest extends IntegrationTestSupport {
 
+    private final SpringDocConfigProperties springDocProperties;
+    private final SwaggerUiConfigProperties swaggerUiProperties;
+
     PlatformEndpointsIntegrationTest(
-            MockMvc mockMvc, EventRepository eventRepository, AuditRecordRepository auditRecordRepository) {
+            MockMvc mockMvc,
+            EventRepository eventRepository,
+            AuditRecordRepository auditRecordRepository,
+            SpringDocConfigProperties springDocProperties,
+            SwaggerUiConfigProperties swaggerUiProperties) {
         super(mockMvc, eventRepository, auditRecordRepository);
+        this.springDocProperties = springDocProperties;
+        this.swaggerUiProperties = swaggerUiProperties;
     }
 
     @Test
@@ -38,5 +50,13 @@ class PlatformEndpointsIntegrationTest extends IntegrationTestSupport {
         mockMvc.perform(get("/actuator/health"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("UP"));
+    }
+
+    @Test
+    @DisplayName("OB-06 springdoc habilitado de forma explícita: arranque sin WARN de springdoc y Swagger UI disponible")
+    void givenDefaultConfiguration_whenContextStarts_thenSpringdocEndpointsAreExplicitlyEnabled() throws Exception {
+        assertThat(springDocProperties.getApiDocs().isEnabled()).isTrue();
+        assertThat(swaggerUiProperties.isEnabled()).isTrue();
+        mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
     }
 }

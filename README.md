@@ -87,6 +87,10 @@ Variables de entorno del backend (todas opcionales):
 
 La base es H2 en memoria: los datos se pierden al detener el backend.
 
+Para detener el backend o el frontend, presionar `Ctrl+C` en su terminal (cerrar la pestaña
+del navegador no detiene `ng serve`). Si al iniciar aparece `Port 4200 is already in use`,
+quedó otra instancia corriendo: cerrarla, o usar otro puerto con `npm start -- --port 4300`.
+
 ## Docker
 
 ```bash

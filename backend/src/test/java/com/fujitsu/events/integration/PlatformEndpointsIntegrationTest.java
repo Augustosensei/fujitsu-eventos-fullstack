@@ -8,10 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fujitsu.events.repository.AuditRecordRepository;
 import com.fujitsu.events.repository.EventRepository;
+import jakarta.servlet.RequestDispatcher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 class PlatformEndpointsIntegrationTest extends IntegrationTestSupport {
@@ -58,5 +60,18 @@ class PlatformEndpointsIntegrationTest extends IntegrationTestSupport {
         assertThat(springDocProperties.getApiDocs().isEnabled()).isTrue();
         assertThat(swaggerUiProperties.isEnabled()).isTrue();
         mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("OB-07 error fuera de los controllers (/error) → 500 sin stack trace aunque se pida trace=true")
+    void givenUnhandledServletError_whenRequestingTrace_thenStackTraceIsNeverExposed() throws Exception {
+        mockMvc.perform(get("/error")
+                        .param("trace", "true")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .requestAttr(RequestDispatcher.ERROR_STATUS_CODE, 500)
+                        .requestAttr(RequestDispatcher.ERROR_EXCEPTION, new IllegalStateException("boom")))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.trace").doesNotExist());
     }
 }

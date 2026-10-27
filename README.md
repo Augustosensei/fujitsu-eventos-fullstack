@@ -49,10 +49,10 @@ empiecen con `cd`.
 | Docker | Docker Engine con el plugin Compose (`docker compose`) | Opcional: levantar todo con un comando. Probado con Engine 29.9.2 y Compose 5.6.1. |
 
 Versiones resueltas (las últimas estables al construir el proyecto): Spring Boot 4.1.2,
-Angular 22.2.4, springdoc-openapi 3.2.0, MapStruct 1.6.3, lombok-mapstruct-binding 0.2.0,
-JaCoCo 0.8.16, angular-eslint 22.6.0, `@vitest/coverage-v8` 5.0.5, vite 8.3.5 (forzada, ver
-[Decisiones](#build-calidad-y-entrega)). Lombok y el resto de las dependencias de Spring las fija
-Spring Boot.
+Angular 22.2.3 (CLI y build 22.2.4), springdoc-openapi 3.2.0, MapStruct 1.6.3,
+lombok-mapstruct-binding 0.2.0, JaCoCo 0.8.16, angular-eslint 22.6.0, `@vitest/coverage-v8`
+5.0.5, vite 8.3.5 (forzada, ver [Decisiones](#build-calidad-y-entrega)). Lombok y el resto de
+las dependencias de Spring las fija Spring Boot.
 
 ## Ejecutar
 

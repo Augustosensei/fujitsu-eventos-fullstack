@@ -401,6 +401,7 @@ al priorizar la claridad.
 |----------|---------|
 | Tres rutas con menú: registrar, eventos, auditorías. | Separa las tareas; cada pantalla tiene su título de pestaña. |
 | Tras un registro exitoso el formulario **conserva** los valores. | El enunciado pide poder reenviar el mismo `eventId` para probar la regla de duplicados. |
+| Los avisos de éxito y de duplicado ofrecen **Cargar otro evento**: vacía el formulario, pone la hora actual, cierra el aviso y lleva el foco al identificador. No envía nada. | Empezar otro evento sin borrar campo por campo, sin perder el reenvío con un clic para probar el duplicado. Se llama "Cargar" y no "Registrar" para no confundirlo con el botón que envía. |
 | El resultado del envío se muestra en un aviso flotante arriba a la derecha (`position: sticky`), que queda hasta cerrarlo o hasta el próximo envío; los errores de cada campo siguen debajo del campo. | El usuario ve el resultado sin bajar ni perder de vista el formulario, y puede reenviar enseguida para probar el duplicado. El aviso no se cierra solo, así hay tiempo de leerlo y usar sus enlaces. |
 | Las tablas de eventos y auditorías piden 10 filas por página (`size=10`); la API mantiene su valor por defecto (20) para quien la use directo. | Con 10 filas la tabla entra casi completa en una notebook (medido: 10 filas visibles en 1440×800, 9 en 1280×720) y el paginador queda cerca; el tamaño de página es una decisión de la pantalla, no del contrato de la API. |
 | Validaciones locales espejo del backend (incluido el recorte del `eventId`); el backend sigue siendo la fuente de verdad. | Feedback inmediato sin depender de un request; los errores del servidor también se muestran bajo cada campo. |
@@ -469,8 +470,8 @@ flotante:
   ("Calidad (QUALITY): genera auditoría"), fecha ya cargada con la hora actual (y botón
   **Ahora** para actualizarla), contador de caracteres, errores bajo cada campo,
   resultado en un aviso arriba a la derecha que queda a la vista aunque la página esté
-  desplazada, con el próximo paso ("Ver eventos registrados", "Ver auditorías") y botón para
-  cerrarlo, duplicado explicado, estados de carga, vacío (con botón para registrar) y error
+  desplazada, con el próximo paso ("Ver eventos registrados", "Ver auditorías", "Cargar otro
+  evento") y botón para cerrarlo, duplicado explicado, estados de carga, vacío (con botón para registrar) y error
   (con "Reintentar").
 - **Paleta azul** definida como variables CSS en `frontend/src/styles.css`:
 

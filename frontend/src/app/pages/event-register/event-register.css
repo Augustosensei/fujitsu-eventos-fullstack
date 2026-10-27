@@ -44,6 +44,22 @@
   background: color-mix(in srgb, var(--color-text) 8%, transparent);
 }
 
+/* Same look as the message links: it is a next step, not a second submit button. */
+.register__load-new {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
 @keyframes toast-in {
   from {
     opacity: 0;

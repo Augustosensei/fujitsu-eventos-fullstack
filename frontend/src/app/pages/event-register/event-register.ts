@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import {
   FieldTree,
@@ -50,6 +51,15 @@ export const REGISTER_MESSAGES = {
   descriptionTooLong: `La descripción puede tener como máximo ${DESCRIPTION_MAX_LENGTH} caracteres.`,
 } as const;
 
+function initialModel(): RegisterModel {
+  return {
+    eventId: '',
+    eventType: '',
+    description: '',
+    timestamp: toLocalDateTimeInput(new Date()),
+  };
+}
+
 function eventIdErrors(rawEventId: string): ValidationError.WithoutFieldTree[] {
   const eventId = strip(rawEventId);
   if (eventId === '') {
@@ -67,7 +77,7 @@ function eventIdErrors(rawEventId: string): ValidationError.WithoutFieldTree[] {
 
 @Component({
   selector: 'app-event-register',
-  imports: [FormField, FormRoot, RouterLink, FieldErrors, StatusMessage],
+  imports: [FormField, FormRoot, NgTemplateOutlet, RouterLink, FieldErrors, StatusMessage],
   styleUrl: './event-register.css',
   templateUrl: './event-register.html',
 })
@@ -78,12 +88,7 @@ export class EventRegister {
   protected readonly descriptionMaxLength = DESCRIPTION_MAX_LENGTH;
   protected readonly result = signal<RegisterResult | null>(null);
 
-  private readonly model = signal<RegisterModel>({
-    eventId: '',
-    eventType: '',
-    description: '',
-    timestamp: toLocalDateTimeInput(new Date()),
-  });
+  private readonly model = signal<RegisterModel>(initialModel());
 
   protected readonly registerForm = form(
     this.model,
@@ -111,6 +116,12 @@ export class EventRegister {
 
   protected dismissResult(): void {
     this.result.set(null);
+  }
+
+  protected loadNewEvent(): void {
+    this.result.set(null);
+    this.registerForm().reset(initialModel());
+    this.registerForm.eventId().focusBoundControl();
   }
 
   protected setTimestampToNow(): void {

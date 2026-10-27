@@ -157,7 +157,7 @@ describe('EventRegister', () => {
     const form = host.querySelector('form')!;
     expect(toast.querySelector('app-status-message')!.getAttribute('role')).toBe('status');
     expect(toast.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(toast.querySelector('button')!.getAttribute('aria-label')).toBe('Cerrar aviso');
+    expect(toast.querySelector('.toast__close')!.getAttribute('aria-label')).toBe('Cerrar aviso');
   });
 
   it('UI-20 given a duplicate toast when the user closes it then it disappears and the values are kept', async () => {
@@ -193,6 +193,66 @@ describe('EventRegister', () => {
 
     expect(host.querySelector('.toast')).toBeNull();
   });
+
+  function loadNewButton(): HTMLButtonElement | null {
+    return host.querySelector<HTMLButtonElement>('.toast .register__load-new');
+  }
+
+  it('UI-22 given a success when the user presses Cargar otro evento then the form goes back to its initial state with the current time, unmarked, and the focus on the eventId', async () => {
+    await fill({ ...VALID, timestamp: '2026-05-20T08:00:00' });
+    await submitAndFlush(null);
+    vi.setSystemTime(new Date(2026, 4, 20, 9, 45, 12));
+
+    const button = loadNewButton()!;
+    expect(button.type).toBe('button');
+    expect(button.textContent!.trim()).toBe('Cargar otro evento');
+    button.click();
+    await fixture.whenStable();
+
+    httpMock.expectNone('/api/events');
+    expect(host.querySelector('.toast')).toBeNull();
+    expect(control('eventId').value).toBe('');
+    expect(control('eventType').value).toBe('');
+    expect(control('description').value).toBe('');
+    expect(control('timestamp').value).toBe('2026-05-20T09:45:12');
+    expect(host.querySelectorAll('.field-error').length).toBe(0);
+    expect(submitButton().getAttribute('aria-disabled')).toBe('true');
+    expect(document.activeElement).toBe(control('eventId'));
+
+    await fill({ eventId: 'EVT-1002', eventType: 'PRODUCTION', description: 'Line started' });
+    const sent = await submitAndFlush(null);
+    expect(sent).toEqual({
+      eventId: 'EVT-1002',
+      eventType: 'PRODUCTION',
+      description: 'Line started',
+      timestamp: '2026-05-20T09:45:12',
+    });
+  });
+
+  it('UI-22 given a duplicate when the toast is shown then it offers Cargar otro evento, which clears the form', async () => {
+    await fill(VALID);
+    await submitAndFlush({ detail: DUPLICATE_DETAIL, code: 'DUPLICATE_EVENT' }, 409);
+
+    loadNewButton()!.click();
+    await fixture.whenStable();
+
+    expect(host.querySelector('.toast')).toBeNull();
+    expect(control('eventId').value).toBe('');
+  });
+
+  it.each([
+    [{ detail: 'interno', code: 'INTERNAL_ERROR' }, 500],
+    [{ detail: 'La solicitud tiene datos inválidos.', code: 'VALIDATION_ERROR' }, 400],
+  ])(
+    'UI-22 given an error other than a duplicate (%o, %i) when the toast is shown then it does not offer Cargar otro evento',
+    async (body, status) => {
+      await fill(VALID);
+      await submitAndFlush(body, status);
+
+      expect(host.querySelector('.toast')).not.toBeNull();
+      expect(loadNewButton()).toBeNull();
+    },
+  );
 
   it('UI-04 given a 400 with errors when submitting then each message appears under its field and clears when edited', async () => {
     await fill(VALID);

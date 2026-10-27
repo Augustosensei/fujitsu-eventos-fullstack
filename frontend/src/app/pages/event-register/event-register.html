@@ -12,11 +12,15 @@
             @if (outcome.event.eventType === 'QUALITY') {
               <a routerLink="/audits">Ver auditorías</a>
             }
+            <ng-container [ngTemplateOutlet]="loadNew" />
           </p>
         </app-status-message>
       } @else {
         <app-status-message kind="error">
           <p class="message__title">{{ outcome.error.message }}</p>
+          @if (outcome.error.code === 'DUPLICATE_EVENT') {
+            <p class="message__links"><ng-container [ngTemplateOutlet]="loadNew" /></p>
+          }
         </app-status-message>
       }
       <button
@@ -41,6 +45,12 @@
     </div>
   }
 </div>
+
+<ng-template #loadNew>
+  <button type="button" class="register__load-new" (click)="loadNewEvent()">
+    Cargar otro evento
+  </button>
+</ng-template>
 
 <section class="page page--narrow register" aria-labelledby="register-title">
   <h1 id="register-title" class="page__title">Registrar evento</h1>
